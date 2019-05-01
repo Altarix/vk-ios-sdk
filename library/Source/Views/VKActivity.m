@@ -80,7 +80,7 @@ NSString *const VKActivityTypePost = @"VKActivityTypePost";
     }
     self.shareDialog.uploadImages = uploadImages;
     __weak __typeof(self) wself = self;
-    [self.shareDialog setCompletionHandler:^(VKShareDialogController *dialog, VKShareDialogControllerResult result) {
+    [self.shareDialog setCompletionHandler:^(VKShareDialogController *dialog, VKShareDialogControllerResult result, NSError* error) {
         __strong __typeof(wself) sself = wself;
         [sself activityDidFinish:result == VKShareDialogControllerResultDone];
         sself.shareDialog = nil;
