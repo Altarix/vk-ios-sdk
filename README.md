@@ -1,10 +1,41 @@
+## Отличия от официального SDK
+#### VKShareDialogController:
+##### 1. В диалоговом окне с ошибкой добавил кнопку "OK". 
+В стандартном SDK диалоговое окно невозможно закрыть.  https://github.com/VKCOM/vk-ios-sdk/issues/527
+
+##### 2. Добавил возможность реагировать на ошибки публикации.
+В VKShareDialogControllerResult добавил VKShareDialogControllerResultError. 
+В VKShareDialogController в completionHandler добавил ошибку, которая возвращается если result принимает значение VKShareDialogControllerResultError.
+```objective-c
+@property(nonatomic, copy) void (^completionHandler)(VKShareDialogController *dialog, VKShareDialogControllerResult result, NSError* error);
+```
+Пример:
+```swift
+let shareDialog = VKShareDialogController()
+shareDialog.text = "Text"
+shareDialog.requestedScope = [VK_PER_WALL]
+shareDialog.completionHandler = { dialog, result, error in
+    presenter.dismiss(animated: true)
+    switch result {
+    case .cancelled:
+        print("Cancelled")
+    case .done:
+        print("Success")
+    case .error:
+        let vkError = (error as NSError?)?.userInfo[VkErrorDescriptionKey] as? VKError
+        onError(vkError?.errorCode)
+        onError(vkError?.errorMessage)
+    }
+}
+presenter.present(shareDialog, animated: true)
+```
 vk-ios-sdk
 ==========
 
 Library for working with VK API, authorizing through VK app, using VK API methods. Supported iOS from 6.0
+
 Prepare for Using VK SDK
 ----------
-
 To use VK SDK primarily you need to create a new Standalone VK application [here](https://vk.com/editapp?act=create). Choose a title and confirm the action via SMS and you will be redirected to the application settings page.
 You will need your APP_ID to use the library. Fill in the App Bundle for iOS field.
 
